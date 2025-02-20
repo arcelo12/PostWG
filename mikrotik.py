@@ -2,17 +2,9 @@ import paramiko
 import json
 import os
 
-# Load konfigurasi
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "config.json")
-
-with open(config_path, "r") as f:
-    config = json.load(f)
-
-MIKROTIK_CONFIG = config["mikrotik"]
-
 class Mikrotik:
-    def __init__(self):
+    def __init__(self, mikrotik_config):
+        self.mikrotik_config = mikrotik_config
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connected = False
@@ -21,12 +13,12 @@ class Mikrotik:
         """Membuat koneksi SSH ke MikroTik"""
         if not self.connected:
             try:
-                print(f"🔄 Menghubungkan ke MikroTik {MIKROTIK_CONFIG['host']}:{MIKROTIK_CONFIG['port']}...")
+                print(f"🔄 Menghubungkan ke MikroTik {self.mikrotik_config['host']}:{self.mikrotik_config['port']}...")
                 self.ssh.connect(
-                    hostname=MIKROTIK_CONFIG["host"],
-                    port=MIKROTIK_CONFIG["port"],
-                    username=MIKROTIK_CONFIG["user"],
-                    password=MIKROTIK_CONFIG["password"]
+                    hostname=self.mikrotik_config["host"],
+                    port=self.mikrotik_config["port"],
+                    username=self.mikrotik_config["user"],
+                    password=self.mikrotik_config["password"]
                 )
                 self.connected = True
                 print("✅ Koneksi SSH berhasil!")
@@ -96,7 +88,7 @@ class Mikrotik:
 
 def test_ssh_connection():
     """Menguji koneksi SSH ke MikroTik"""
-    mikrotik = Mikrotik()
+    mikrotik = Mikrotik(config["mikrotik"][0])
     mikrotik.ssh_connect()
     mikrotik.ssh_close()
 

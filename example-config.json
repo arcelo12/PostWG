@@ -7,12 +7,40 @@
         "password": "password",
         "dbname": "wg"
     },
-    "mikrotik": {
-        "host": "localhost",
-        "port": 22,
-        "user": "user",
-        "password": "password",
-        "interface": "wireguard"
+    "mikrotik": [
+        {
+            "host": "localhost",
+            "port": 22,
+            "user": "user",
+            "password": "password",
+            "interface": "wireguard"
+        },
+        {
+            "host": "another-host",
+            "port": 22,
+            "user": "another-user",
+            "password": "another-password",
+            "interface": "wireguard"
+        }
+    ],
+    "debian": {
+        "native": true,
+        "ssh": [
+            {
+                "host": "localhost",
+                "port": 22,
+                "user": "user",
+                "password": "password",
+                "interface": "wireguard"
+            },
+            {
+                "host": "another-host",
+                "port": 22,
+                "user": "another-user",
+                "password": "another-password",
+                "interface": "wireguard"
+            }
+        ]
     },
     "cron": {
         "enabled": false,
