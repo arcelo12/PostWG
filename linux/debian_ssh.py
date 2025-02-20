@@ -4,15 +4,6 @@ import os
 from utils import send_discord_notification
 from pgsql import get_db_peers
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "config.json")
-
-with open(config_path, "r") as f:
-    config = json.load(f)
-
-
-DISCORD_WEBHOOK = config["discord_webhook"]
-
 class DebianSSH:
     def __init__(self, ssh_config):
         self.ssh_config = ssh_config
