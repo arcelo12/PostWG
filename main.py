@@ -2,8 +2,7 @@ import time
 import threading
 import json
 import os
-from sync import sync_wireguard
-from status import check_status
+from peer import sync_wireguard, check_status
 
 # Load konfigurasi dari config.json
 CONFIG_FILE = "config.json"
@@ -78,4 +77,3 @@ if __name__ == "__main__":
             print("❌ Pilihan tidak valid!")
 
     start_cron()  # Jalankan cron jika sudah aktif sebelumnya
-

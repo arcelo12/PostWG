@@ -1,22 +1,31 @@
 import requests
 import json
+import os
 
-# Load configuration
-with open("config.json", "r") as config_file:
-    config = json.load(config_file)
+# Load konfigurasi
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "config.json")
+
+with open(config_path, "r") as f:
+    config = json.load(f)
 
 DISCORD_WEBHOOK = config["discord_webhook"]
 
 def send_discord_notification(message):
-    """Mengirim notifikasi ke Discord menggunakan webhook."""
-    if DISCORD_WEBHOOK:
-        payload = {"content": message}
-        try:
-            response = requests.post(DISCORD_WEBHOOK, json=payload)
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            print(f"⚠️ Gagal mengirim notifikasi ke Discord: {e}")
+    """Mengirim notifikasi ke Discord"""
+    if not DISCORD_WEBHOOK:
+        print("❌ Webhook Discord tidak diatur.")
+        return
 
-if __name__ == "__main__":
-    send_discord_notification("🔔 Notifikasi test dari WireGuard Sync!")
+    data = {
+        "content": message
+    }
 
+    try:
+        response = requests.post(DISCORD_WEBHOOK, json=data)
+        if response.status_code == 204:
+            print("✅ Notifikasi berhasil dikirim ke Discord.")
+        else:
+            print(f"❌ Gagal mengirim notifikasi ke Discord: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Terjadi kesalahan saat mengirim notifikasi ke Discord: {e}")
