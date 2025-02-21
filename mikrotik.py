@@ -31,7 +31,7 @@ class Mikrotik:
                     timeout=10  # Tambahkan timeout
                 )
                 self.connected = True
-                print("✅ Koneksi SSH ke {self.name} berhasil!")
+                print(f"✅ Koneksi SSH ke {self.name} berhasil!")
             except Exception as e:
                 print(f"❌ Gagal menghubungkan ke {self.name}: {e}")
                 raise e

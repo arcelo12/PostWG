@@ -58,10 +58,10 @@ def sync_wireguard():
                             mikrotik.delete_wireguard_peer(peer["public-key"], peer["name"], mikrotik_config["interface"])
 
                     # Kirim notifikasi
-                    send_discord_notification(f"✅ Sinkronisasi WireGuard selesai pada {mikrotik_config['host']}.")
+                    send_discord_notification(f"✅ Sinkronisasi WireGuard selesai pada {mikrotik_config['name']} ({mikrotik_config['host']}).")
                 except Exception as e:
                     print(f"Error on {server} ({mikrotik_config['host']}): {e}")
-                    send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {server} ({mikrotik_config['host']}): {e}")
+                    send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {mikrotik_config['name']} ({mikrotik_config['host']}): {e}")
                 finally:
                     mikrotik.ssh_close()
 
@@ -104,11 +104,11 @@ def check_status():
                     print(f"Total Peers: {total_peers}")
 
                     # Kirim notifikasi ke Discord jika webhook diatur
-                    send_discord_notification(f"WireGuard Status pada {mikrotik_config['host']}:\n```{formatted_status}```\nTotal Peers: {total_peers}")
+                    send_discord_notification(f"WireGuard Status pada {mikrotik_config['name']} ({mikrotik_config['host']}):\n```{formatted_status}```\nTotal Peers: {total_peers}")
 
                 except Exception as e:
                     print(f"Error on {server} ({mikrotik_config['host']}): {e}")
-                    send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {server} ({mikrotik_config['host']}): {e}")
+                    send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {mikrotik_config['name']} ({mikrotik_config['host']}): {e}")
                 finally:
                     mikrotik.ssh_close()
 
