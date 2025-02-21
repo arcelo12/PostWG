@@ -2,8 +2,17 @@ import paramiko
 import json
 import os
 
+# Load konfigurasi
+base_dir = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_dir, "config.json")
+
+with open(config_path, "r") as f:
+    config = json.load(f)
+
+
 class Mikrotik:
     def __init__(self, mikrotik_config):
+        self.name = mikrotik_config["name"]
         self.mikrotik_config = mikrotik_config
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -13,17 +22,18 @@ class Mikrotik:
         """Membuat koneksi SSH ke MikroTik"""
         if not self.connected:
             try:
-                print(f"🔄 Menghubungkan ke MikroTik {self.mikrotik_config['host']}:{self.mikrotik_config['port']}...")
+                print(f"🔄 Menghubungkan ke {self.name} ({self.mikrotik_config['host']}:{self.mikrotik_config['port']})...")
                 self.ssh.connect(
                     hostname=self.mikrotik_config["host"],
                     port=self.mikrotik_config["port"],
                     username=self.mikrotik_config["user"],
-                    password=self.mikrotik_config["password"]
+                    password=self.mikrotik_config["password"],
+                    timeout=10  # Tambahkan timeout
                 )
                 self.connected = True
-                print("✅ Koneksi SSH berhasil!")
+                print("✅ Koneksi SSH ke {self.name} berhasil!")
             except Exception as e:
-                print(f"❌ Gagal menghubungkan ke MikroTik: {e}")
+                print(f"❌ Gagal menghubungkan ke {self.name}: {e}")
                 raise e
 
     def execute_command(self, command):
@@ -38,7 +48,7 @@ class Mikrotik:
         if self.connected:
             self.ssh.close()
             self.connected = False
-            print("🔒 Koneksi SSH ditutup.")
+            print(f"🔒 Koneksi SSH ke {self.name} ditutup.")
 
     def add_wireguard_peer(self, name, public_key, allowed_ip, interface):
         """Menambahkan peer WireGuard ke MikroTik melalui SSH"""

@@ -1,32 +1,36 @@
 {
-    "discord_webhook": "https://discord.com/api/webhooks/",
+    "servers": ["mikrotik"],
+    "discord_webhook": "https://discord.com/api/webhooks/1341716715167547412/m5qY8EJkDYNoxV7W0W0yQ6jVtiVVBLshm-fjO_n8DFPuO7sr75J7rvUD8SqnOCm68ZCp",
     "database": {
-        "host": "localhost",
+        "host": "192.168.107.96",
         "port": 5432,
-        "user": "user",
-        "password": "password",
+        "user": "wg",
+        "password": "1234",
         "dbname": "wg"
     },
     "mikrotik": [
         {
-            "host": "localhost",
+            "name": "Mikrotik Server 1",
+            "host": "103.155.191.87",
             "port": 22,
-            "user": "user",
-            "password": "password",
+            "user": "test",
+            "password": "123",
             "interface": "wireguard"
         },
         {
-            "host": "another-host",
-            "port": 22,
-            "user": "another-user",
-            "password": "another-password",
-            "interface": "wireguard"
+            "name": "Mikrotik Server 2",
+            "host": "103.155.191.77",
+            "port": 2223,
+            "user": "test",
+            "password": "123",
+            "interface": "wg1"
         }
     ],
     "debian": {
         "native": true,
         "ssh": [
             {
+                "name": "Debian Server 1",
                 "host": "localhost",
                 "port": 22,
                 "user": "user",
@@ -34,6 +38,7 @@
                 "interface": "wireguard"
             },
             {
+                "name": "Debian Server 2",
                 "host": "another-host",
                 "port": 22,
                 "user": "another-user",

@@ -6,12 +6,12 @@ from pgsql import get_db_peers
 
 # Load konfigurasi
 base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "config.json")
+config_path = os.path.join(base_dir, "..", "config.json")  # Update the path to go one level up
 
 with open(config_path, "r") as f:
     config = json.load(f)
 
-INTERFACE = config["debian"]["interface"]
+INTERFACE = config["debian"]["ssh"][0]["interface"]  # Update to access the correct key
 DISCORD_WEBHOOK = config["discord_webhook"]
 
 def get_wireguard_status():
