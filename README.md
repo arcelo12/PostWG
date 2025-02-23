@@ -1,5 +1,3 @@
-WIREGUARD SYNC MANAGER WITH PostgreSQL
-
 # WireGuard Sync Manager
 
 WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status WireGuard pada server Debian dan MikroTik. Alat ini mendukung sinkronisasi otomatis menggunakan cron job dan notifikasi ke Discord.
