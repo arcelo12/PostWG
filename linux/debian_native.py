@@ -57,10 +57,10 @@ def delete_wireguard_peer(public_key, interface):
     except subprocess.CalledProcessError as e:
         raise Exception(f"Gagal menghapus peer WireGuard: {e}")
 
-def sync_wireguard(interface):
+def sync_wireguard(interface, database):
     try:
         # Ambil data dari database
-        db_peers = get_db_peers()
+        db_peers = get_db_peers(database)
 
         # Ambil daftar peer yang ada di WireGuard
         wg_peers = get_wireguard_status(interface)

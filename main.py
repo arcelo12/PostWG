@@ -1,7 +1,6 @@
 import time
 import threading
 import json
-import os
 from peer import sync_wireguard, check_status
 from linux.debian_ssh import DebianSSH
 
@@ -27,14 +26,14 @@ def sync_job():
     """Looping sinkronisasi otomatis"""
     while config["cron"]["enabled"]:
         print("\n🔄 Menjalankan sinkronisasi otomatis...")
-        sync_wireguard(config["servers"])
+        sync_wireguard(config)
         time.sleep(SYNC_INTERVAL)
 
 def status_job():
     """Looping pengecekan status otomatis"""
     while config["cron"]["enabled"]:
         print("\n🔍 Mengecek status WireGuard otomatis...")
-        check_status(config["servers"])
+        check_status(config)
         time.sleep(STATUS_INTERVAL)
 
 def start_cron():
@@ -94,9 +93,9 @@ if __name__ == "__main__":
         choice = input("Pilih opsi (1/2/3/4/5): ").strip()
 
         if choice == "1":
-            sync_wireguard(config["servers"])
+            sync_wireguard(config)
         elif choice == "2":
-            check_status(config["servers"])
+            check_status(config)
         elif choice == "3":
             toggle_cron()
         elif choice == "4":

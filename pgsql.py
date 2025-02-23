@@ -1,17 +1,6 @@
 import psycopg2
-import json
-import os
 
-# Load konfigurasi
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "config.json")
-
-with open(config_path, "r") as f:
-    config = json.load(f)
-
-DB_CONFIG = config["database"]
-
-def get_db_peers():
+def get_db_peers(DB_CONFIG):
     """Mengambil data peers dari database PostgreSQL"""
     conn = psycopg2.connect(
         dbname=DB_CONFIG["dbname"],

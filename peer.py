@@ -4,16 +4,16 @@ from linux.debian_ssh import DebianSSH
 from linux.debian_native import sync_wireguard as debian_native_sync, check_status as debian_native_check
 from mikrotik import Mikrotik
 
-def sync_wireguard(servers):
-    for server in servers:
+def sync_wireguard(config):
+    for server in config["servers"]:
         if server["type"] == "debian-native":
             try:
-                debian_native_sync(server["interface"])
+                debian_native_sync(server["interface"], config["database"])
             except Exception as e:
                 print(f"Error on {server['name']}: {e}")
                 send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {server['name']}: {e}")
         elif server["type"] == "debian-ssh":
-            debian_ssh = DebianSSH(server)
+            debian_ssh = DebianSSH(server, config)
             try:
                 debian_ssh.sync_wireguard()
             except Exception as e:
@@ -24,7 +24,7 @@ def sync_wireguard(servers):
             mikrotik.ssh_connect()
             try:
                 # Ambil data dari database
-                db_peers = get_db_peers()
+                db_peers = get_db_peers(config["database"])
 
                 # Ambil daftar peer yang ada di WireGuard
                 wg_peers = mikrotik.get_wireguard_status()
@@ -51,8 +51,8 @@ def sync_wireguard(servers):
             finally:
                 mikrotik.ssh_close()
 
-def check_status(servers):
-    for server in servers:
+def check_status(config):
+    for server in config["servers"]:
         if server["type"] == "debian-native":
             try:
                 debian_native_check(server["interface"])
@@ -60,7 +60,7 @@ def check_status(servers):
                 print(f"Error on {server['name']}: {e}")
                 send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {server['name']}: {e}")
         elif server["type"] == "debian-ssh":
-            debian_ssh = DebianSSH(server)
+            debian_ssh = DebianSSH(server, config)
             try:
                 debian_ssh.check_status()
             except Exception as e:
