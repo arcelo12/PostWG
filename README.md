@@ -1,6 +1,5 @@
 WIREGUARD SYNC MANAGER WITH PostgreSQL
 
-```markdown
 # WireGuard Sync Manager
 
 WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status WireGuard pada server Debian dan MikroTik. Alat ini mendukung sinkronisasi otomatis menggunakan cron job dan notifikasi ke Discord.
@@ -61,6 +60,21 @@ WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status Wire
     CREATE DATABASE wg;
     CREATE USER wg WITH ENCRYPTED PASSWORD '1234';
     GRANT ALL PRIVILEGES ON DATABASE wg TO wg;
+    \q
+    ```
+
+6. Buat tabel `wireguard_peers` di PostgreSQL:
+    ```sh
+    sudo -u postgres psql -d wg
+    CREATE TABLE IF NOT EXISTS public.wireguard_peers (
+        id integer NOT NULL DEFAULT nextval('wireguard_peers_id_seq'::regclass),
+        name character varying(255) NOT NULL,
+        public_key text NOT NULL,
+        allowed_ip text NOT NULL,
+        created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT wireguard_peers_pkey PRIMARY KEY (id),
+        CONSTRAINT wireguard_peers_name_key UNIQUE (name)
+    );
     \q
     ```
 
@@ -165,4 +179,4 @@ pip install -r requirements.txt
 
 ### Menggunakan Dependabot
 
-Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di `dependabot.yml`.
+Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di dependabot.yml.
