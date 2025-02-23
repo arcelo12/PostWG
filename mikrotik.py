@@ -1,6 +1,4 @@
 import paramiko
-import json
-import os
 import time
 
 class Mikrotik:
