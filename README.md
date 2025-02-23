@@ -157,11 +157,3 @@ pip install -r requirements.txt
 ### Menggunakan Dependabot
 
 Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di dependabot.yml.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah lisensi MIT. Lihat file LICENSE untuk informasi lebih lanjut.
-```
-
-Pastikan untuk menyesuaikan URL repositori dan informasi lisensi sesuai dengan kebutuhan Anda.
-Pastikan untuk menyesuaikan URL repositori dan informasi lisensi sesuai dengan kebutuhan Anda.
