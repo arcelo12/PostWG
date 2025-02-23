@@ -1,4 +1,4 @@
-Berikut adalah contoh file `README.md` yang menjelaskan proyek Anda berdasarkan file yang ada di workspace Anda:
+WIREGUARD SYNC MANAGER WITH PostgreSQL
 
 ```markdown
 # WireGuard Sync Manager
@@ -55,6 +55,15 @@ WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status Wire
     cp example-config.json config.json
     ```
 
+5. Buat database PostgreSQL:
+    ```sh
+    sudo -u postgres psql
+    CREATE DATABASE wg;
+    CREATE USER wg WITH ENCRYPTED PASSWORD '1234';
+    GRANT ALL PRIVILEGES ON DATABASE wg TO wg;
+    \q
+    ```
+
 ## Penggunaan
 
 Jalankan main.py untuk memulai WireGuard Sync Manager:
@@ -86,8 +95,8 @@ Berikut adalah contoh konfigurasi config.json:
     "database": {
         "host": "127.0.0.1",
         "port": 5432,
-        "user": "user",
-        "password": "password",
+        "user": "wg",
+        "password": "1234",
         "dbname": "wg"
     },
     "servers": [
@@ -131,7 +140,7 @@ Berikut adalah contoh konfigurasi config.json:
   - `name`: Nama server.
   - `host`: Alamat host server (hanya untuk `debian-ssh` dan mikrotik).
   - `port`: Port SSH server (hanya untuk `debian-ssh` dan mikrotik).
-  - `user`: Username SSH server (hanya  `untukdebian-ssh` dan mikrotik).
+  - `user`: Username SSH server (hanya untuk `debian-ssh` dan mikrotik).
   - `password`: Password SSH server (hanya untuk `debian-ssh` dan mikrotik).
   - `interface`: Nama interface WireGuard.
 - `cron`: Pengaturan cron job untuk sinkronisasi otomatis.
@@ -156,4 +165,4 @@ pip install -r requirements.txt
 
 ### Menggunakan Dependabot
 
-Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di dependabot.yml.
+Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di `dependabot.yml`.
