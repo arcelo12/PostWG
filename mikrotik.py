@@ -1,14 +1,7 @@
 import paramiko
 import json
 import os
-
-# Load konfigurasi
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "config.json")
-
-with open(config_path, "r") as f:
-    config = json.load(f)
-
+import time
 
 class Mikrotik:
     def __init__(self, mikrotik_config):
@@ -18,23 +11,30 @@ class Mikrotik:
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connected = False
 
-    def ssh_connect(self):
-        """Membuat koneksi SSH ke MikroTik"""
-        if not self.connected:
+    def ssh_connect(self, retries=3, delay=5):
+        """Membuat koneksi SSH ke MikroTik dengan mekanisme retry"""
+        attempt = 0
+        while attempt < retries:
             try:
-                print(f"🔄 Menghubungkan ke {self.name} ({self.mikrotik_config['host']}:{self.mikrotik_config['port']})...")
+                print(f"🔄 Menghubungkan ke {self.name} ({self.mikrotik_config['host']}:{self.mikrotik_config['port']})... (Percobaan {attempt + 1})")
                 self.ssh.connect(
                     hostname=self.mikrotik_config["host"],
                     port=self.mikrotik_config["port"],
                     username=self.mikrotik_config["user"],
                     password=self.mikrotik_config["password"],
-                    timeout=10  # Tambahkan timeout
+                    timeout=30  # Tambahkan timeout yang lebih lama
                 )
                 self.connected = True
                 print(f"✅ Koneksi SSH ke {self.name} berhasil!")
+                return
             except Exception as e:
                 print(f"❌ Gagal menghubungkan ke {self.name}: {e}")
-                raise e
+                attempt += 1
+                if attempt < retries:
+                    print(f"🔄 Mencoba kembali dalam {delay} detik...")
+                    time.sleep(delay)
+                else:
+                    raise e
 
     def execute_command(self, command):
         """Menjalankan perintah di MikroTik melalui SSH"""

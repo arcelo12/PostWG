@@ -1,24 +1,17 @@
 import subprocess
 import json
 import os
+import sys
 from utils import send_discord_notification
 from pgsql import get_db_peers
 
-# Load konfigurasi
-base_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(base_dir, "..", "config.json")  # Update the path to go one level up
+DISCORD_WEBHOOK = None
 
-with open(config_path, "r") as f:
-    config = json.load(f)
-
-INTERFACE = config["debian"]["ssh"][0]["interface"]  # Update to access the correct key
-DISCORD_WEBHOOK = config["discord_webhook"]
-
-def get_wireguard_status():
+def get_wireguard_status(interface):
     """Mengambil status WireGuard menggunakan perintah native"""
     try:
         result = subprocess.run(
-            ["wg", "show", INTERFACE, "dump"],
+            ["wg", "show", interface, "dump"],
             capture_output=True,
             text=True
         )
@@ -42,35 +35,35 @@ def get_wireguard_status():
     except Exception as e:
         raise Exception(f"Gagal mendapatkan status WireGuard: {e}")
 
-def add_wireguard_peer(name, public_key, allowed_ip):
+def add_wireguard_peer(name, public_key, allowed_ip, interface):
     """Menambahkan peer WireGuard menggunakan perintah native"""
     try:
         subprocess.run(
-            ["wg", "set", INTERFACE, "peer", public_key, "allowed-ips", allowed_ip],
+            ["wg", "set", interface, "peer", public_key, "allowed-ips", allowed_ip],
             check=True
         )
         print(f"✅ Peer WireGuard {name} berhasil ditambahkan.")
     except subprocess.CalledProcessError as e:
         raise Exception(f"Gagal menambahkan peer WireGuard: {e}")
 
-def delete_wireguard_peer(public_key):
+def delete_wireguard_peer(public_key, interface):
     """Menghapus peer WireGuard menggunakan perintah native"""
     try:
         subprocess.run(
-            ["wg", "set", INTERFACE, "peer", public_key, "remove"],
+            ["wg", "set", interface, "peer", public_key, "remove"],
             check=True
         )
         print(f"✅ Peer WireGuard dengan public-key {public_key} berhasil dihapus.")
     except subprocess.CalledProcessError as e:
         raise Exception(f"Gagal menghapus peer WireGuard: {e}")
 
-def sync_wireguard():
+def sync_wireguard(interface):
     try:
         # Ambil data dari database
         db_peers = get_db_peers()
 
         # Ambil daftar peer yang ada di WireGuard
-        wg_peers = get_wireguard_status()
+        wg_peers = get_wireguard_status(interface)
         wg_peer_keys = {peer["public-key"] for peer in wg_peers}
 
         # Sinkronisasi: Tambah peer baru, hapus peer lama
@@ -79,12 +72,12 @@ def sync_wireguard():
         # Tambah peer yang belum ada di WireGuard
         for name, public_key, allowed_ip in db_peers:
             if public_key not in wg_peer_keys:
-                add_wireguard_peer(name, public_key, allowed_ip)
+                add_wireguard_peer(name, public_key, allowed_ip, interface)
 
         # Hapus peer yang tidak ada di database
         for peer in wg_peers:
             if peer["public-key"] not in db_peer_keys:
-                delete_wireguard_peer(peer["public-key"])
+                delete_wireguard_peer(peer["public-key"], interface)
 
         # Kirim notifikasi
         if DISCORD_WEBHOOK:
@@ -95,10 +88,10 @@ def sync_wireguard():
         if DISCORD_WEBHOOK:
             send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard: {e}")
 
-def check_status():
+def check_status(interface):
     try:
         # Dapatkan status WireGuard
-        status_output = get_wireguard_status()
+        status_output = get_wireguard_status(interface)
 
         # Format hasil
         formatted_status = "\n".join(
@@ -117,4 +110,4 @@ def check_status():
             send_discord_notification(f"⚠️ Gagal mengecek status WireGuard: {e}")
 
 if __name__ == "__main__":
-    sync_wireguard()
+    sync_wireguard(sys.argv[1])

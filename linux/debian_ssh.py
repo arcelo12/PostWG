@@ -1,6 +1,4 @@
 import paramiko
-import json
-import os
 from utils import send_discord_notification
 from pgsql import get_db_peers
 
@@ -97,9 +95,12 @@ class DebianSSH:
 
             # Kirim notifikasi
             send_discord_notification(f"✅ Sinkronisasi WireGuard selesai pada {self.ssh_config['host']}.")
+        except KeyError as e:
+            print(f"Error: Missing configuration key: {e}")
+            send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
         except Exception as e:
             print(f"Error: {e}")
-            send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config['host']}: {e}")
+            send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
         finally:
             self.ssh_close()
 
@@ -118,12 +119,11 @@ class DebianSSH:
             # Kirim notifikasi ke Discord jika webhook diatur
             send_discord_notification(f"WireGuard Status pada {self.ssh_config['host']}:\n```{formatted_status}```")
 
+        except KeyError as e:
+            print(f"Error: Missing configuration key: {e}")
+            send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
         except Exception as e:
             print(f"Error: {e}")
-            send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config['host']}: {e}")
+            send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
         finally:
             self.ssh_close()
-
-if __name__ == "__main__":
-    debian_ssh = DebianSSH(config["debian"]["ssh"][0])
-    debian_ssh.sync_wireguard()
