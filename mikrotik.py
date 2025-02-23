@@ -95,12 +95,3 @@ class Mikrotik:
 
         print(f"Total Peers: {total_peers}")
         return total_peers
-
-def test_ssh_connection():
-    """Menguji koneksi SSH ke MikroTik"""
-    mikrotik = Mikrotik(config["mikrotik"][0])
-    mikrotik.ssh_connect()
-    mikrotik.ssh_close()
-
-if __name__ == "__main__":
-    test_ssh_connection()
