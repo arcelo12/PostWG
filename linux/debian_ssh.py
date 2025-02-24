@@ -1,11 +1,10 @@
 import paramiko
 from utils import send_discord_notification
-from pgsql import get_db_peers
 
 class DebianSSH:
-    def __init__(self, ssh_config, server_conf):
+    def __init__(self, ssh_config, db):
         self.ssh_config = ssh_config
-        self.server_conf = server_conf
+        self.db = db
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.connected = False
@@ -75,7 +74,7 @@ class DebianSSH:
     def sync_wireguard(self):
         try:
             # Ambil data dari database
-            db_peers = get_db_peers(self.server_conf["database"])
+            db_peers = self.db.get_peers()
 
             # Ambil daftar peer yang ada di WireGuard
             wg_peers = self.get_wireguard_status()

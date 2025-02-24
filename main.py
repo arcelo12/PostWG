@@ -3,6 +3,7 @@ import threading
 import json
 from peer import sync_wireguard, check_status
 from linux.debian_ssh import DebianSSH
+from pgsql import DB
 
 # Load konfigurasi dari config.json
 CONFIG_FILE = "config.json"
@@ -17,6 +18,9 @@ SYNC_INTERVAL = config["cron"]["interval_minutes"] * 60
 STATUS_INTERVAL = SYNC_INTERVAL
 CRON_ENABLED = config["cron"]["enabled"]
 
+# Initialize Database
+db = DB(config["database"])
+
 def save_config():
     """Menyimpan konfigurasi ke config.json"""
     with open(CONFIG_FILE, "w") as f:
@@ -26,14 +30,14 @@ def sync_job():
     """Looping sinkronisasi otomatis"""
     while config["cron"]["enabled"]:
         print("\n🔄 Menjalankan sinkronisasi otomatis...")
-        sync_wireguard(config)
+        sync_wireguard(config, db)
         time.sleep(SYNC_INTERVAL)
 
 def status_job():
     """Looping pengecekan status otomatis"""
     while config["cron"]["enabled"]:
         print("\n🔍 Mengecek status WireGuard otomatis...")
-        check_status(config)
+        check_status(config, db)
         time.sleep(STATUS_INTERVAL)
 
 def start_cron():
@@ -93,9 +97,9 @@ if __name__ == "__main__":
         choice = input("Pilih opsi (1/2/3/4/5): ").strip()
 
         if choice == "1":
-            sync_wireguard(config)
+            sync_wireguard(config, db) # Only for testing purpose, please change to sync_job() after finish testing.
         elif choice == "2":
-            check_status(config)
+            check_status(config, db) # Only for testing purpose, please change to status_job() after finish testing.
         elif choice == "3":
             toggle_cron()
         elif choice == "4":

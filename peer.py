@@ -1,14 +1,13 @@
 from utils import send_discord_notification
-from pgsql import get_db_peers
 from linux.debian_ssh import DebianSSH
 from linux.debian_native import sync_wireguard as debian_native_sync, check_status as debian_native_check
 from mikrotik import Mikrotik
 
-def sync_wireguard(config):
+def sync_wireguard(config, db):
     for server in config["servers"]:
         if server["type"] == "debian-native":
             try:
-                debian_native_sync(server["interface"], config["database"])
+                debian_native_sync(server["interface"], db)
             except Exception as e:
                 print(f"Error on {server['name']}: {e}")
                 send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {server['name']}: {e}")
@@ -24,7 +23,7 @@ def sync_wireguard(config):
             mikrotik.ssh_connect()
             try:
                 # Ambil data dari database
-                db_peers = get_db_peers(config["database"])
+                db_peers = db.get_peers()
 
                 # Ambil daftar peer yang ada di WireGuard
                 wg_peers = mikrotik.get_wireguard_status()

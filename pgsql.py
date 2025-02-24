@@ -1,18 +1,34 @@
-import psycopg2
+from psycopg2 import pool
 
-def get_db_peers(DB_CONFIG):
-    """Mengambil data peers dari database PostgreSQL"""
-    conn = psycopg2.connect(
-        dbname=DB_CONFIG["dbname"],
-        user=DB_CONFIG["user"],
-        password=DB_CONFIG["password"],
-        host=DB_CONFIG["host"],
-        port=DB_CONFIG["port"]
-    )
-    cursor = conn.cursor()
+class DB:
+    def __init__(self, db_conf):
+        # Initialize Instance Variable
+        self.pool = pool.SimpleConnectionPool(
+            minconn=1,
+            maxconn=10,
+            dbname=db_conf["dbname"],
+            user=db_conf["user"],
+            password=db_conf["password"],
+            host=db_conf["host"],
+            port=db_conf["port"]
+        )
 
-    cursor.execute("SELECT name, public_key, allowed_ip FROM wireguard_peers")
-    db_peers = cursor.fetchall()
+    def get_peers(self):
+        """Mengambil data peers dari database PostgreSQL"""
+        # Get Connection from Pool
+        conn = self.pool.getconn()
 
-    conn.close()
-    return db_peers
+        try:
+            with conn.cursor() as cursor:  
+                cursor.execute("SELECT name, public_key, allowed_ip FROM wireguard_peers")
+                db_peers = cursor.fetchall()
+                print("[DB] Successfuly to fetch Wireguard Peers from Database...")
+                return db_peers
+        except:
+            print("[DB] Failed to fetch Wireguard Peers from Database...")
+        finally:
+            self.pool.putconn(conn)  # Return the connection to the pool
+
+    def add_peer(self):
+        # Do something here...
+        return None
