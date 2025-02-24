@@ -93,3 +93,27 @@ class Mikrotik:
 
         print(f"Total Peers: {total_peers}")
         return total_peers
+    
+    def sync_wireguard(self, db_peers):
+        wg_peers = self.get_wireguard_status()
+        wg_peer_keys = {(peer["public-key"], peer["name"]) for peer in wg_peers}
+        db_peer_keys = {(peer[1], peer[0]) for peer in db_peers}
+
+        for name, public_key, allowed_ip in db_peers:
+            if (public_key, name) not in wg_peer_keys:
+                self.add_wireguard_peer(name, public_key, allowed_ip, self.server["interface"])
+
+        for peer in wg_peers:
+            if (peer["public-key"], peer["name"]) not in db_peer_keys:
+                self.delete_wireguard_peer(peer["public-key"], peer["name"], self.server["interface"])
+
+    def check_wireguard_status(self):
+        status_output = self.get_wireguard_status()
+        filtered_peers = [peer for peer in status_output if peer.get("interface") == self.server["interface"]]
+        formatted_status = "\n".join(
+            [f"Peer: {peer['name']}, Public Key: {peer['public-key']}, Allowed IP: {peer['allowed-address']}" for peer in filtered_peers]
+        )
+        print("WireGuard Status:\n", formatted_status)
+        total_peers = self.get_total_peers(self.server["interface"])
+        print(f"Total Peers: {total_peers}")
+        return formatted_status, total_peers
