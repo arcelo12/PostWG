@@ -1,9 +1,6 @@
 import subprocess
-import json
-import os
 import sys
 from utils import send_discord_notification
-from pgsql import get_db_peers
 
 DISCORD_WEBHOOK = None
 
