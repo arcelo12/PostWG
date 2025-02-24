@@ -22,8 +22,6 @@ WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status Wire
 - `config.json`: Konfigurasi untuk WireGuard Sync Manager.
 - `example-config.json`: Contoh konfigurasi untuk WireGuard Sync Manager.
 - `requirements.txt`: Daftar dependensi Python.
-- `.vscode/settings.json`: Pengaturan untuk Visual Studio Code.
-- `.vscode/sftp.json`: Pengaturan SFTP untuk Visual Studio Code.
 - `.github/dependabot.yml`: Pengaturan Dependabot untuk pembaruan dependensi.
 - `.gitignore`: Daftar file dan direktori yang diabaikan oleh Git.
 
@@ -78,7 +76,7 @@ WireGuard Sync Manager adalah alat untuk sinkronisasi dan pengecekan status Wire
 
 ## Penggunaan
 
-Jalankan main.py untuk memulai WireGuard Sync Manager:
+Jalankan `main.py` untuk memulai WireGuard Sync Manager:
 ```sh
 python main.py
 ```
@@ -177,4 +175,4 @@ pip install -r requirements.txt
 
 ### Menggunakan Dependabot
 
-Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di dependabot.yml.
+Dependabot digunakan untuk memperbarui dependensi secara otomatis. Pengaturan Dependabot terdapat di `dependabot.yml`.
