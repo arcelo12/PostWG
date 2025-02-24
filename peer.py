@@ -12,7 +12,7 @@ def sync_wireguard(config, db):
                 print(f"Error on {server['name']}: {e}")
                 send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {server['name']}: {e}")
         elif server["type"] == "debian-ssh":
-            debian_ssh = DebianSSH(server, config)
+            debian_ssh = DebianSSH(server, db)
             try:
                 debian_ssh.sync_wireguard()
             except Exception as e:
