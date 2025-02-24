@@ -50,7 +50,7 @@ def sync_wireguard(config, db):
             finally:
                 mikrotik.ssh_close()
 
-def check_status(config):
+def check_status(config, db):
     for server in config["servers"]:
         if server["type"] == "debian-native":
             try:
@@ -59,7 +59,7 @@ def check_status(config):
                 print(f"Error on {server['name']}: {e}")
                 send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {server['name']}: {e}")
         elif server["type"] == "debian-ssh":
-            debian_ssh = DebianSSH(server, config)
+            debian_ssh = DebianSSH(server, db)
             try:
                 debian_ssh.check_status()
             except Exception as e:
