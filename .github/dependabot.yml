@@ -8,3 +8,8 @@ updates:
   target-branch: "dev"
   schedule:
     interval: "weekly"
+- package-ecosystem: "pip"
+  directory: "/"
+  target-branch: "main"
+  schedule:
+    interval: "monthly"
