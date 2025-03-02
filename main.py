@@ -102,7 +102,9 @@ if __name__ == "__main__":
         choice = input("Pilih opsi (1/2/3/4/5): ").strip()
 
         if choice == "1":
-            sync_wireguard(config, db, utils) # Only for testing purpose, please change to sync_job() after finish testing.
+            for server, i in enumerate(config["servers"], start=1):
+                threading.Thread(target=sync_wireguard(config,db,utils), daemon=True).start() #Thread daemonized
+            # sync_wireguard(config, db, utils) # Only for testing purpose, please change to sync_job() after finish testing.
         elif choice == "2":
             check_status(config, db, utils) # Only for testing purpose, please change to status_job() after finish testing.
         elif choice == "3":
