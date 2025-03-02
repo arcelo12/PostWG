@@ -1,5 +1,5 @@
 import paramiko
-from utils import send_discord_notification
+from utils import Utils
 
 class DebianSSH:
     def __init__(self, ssh_config, db):
@@ -94,13 +94,13 @@ class DebianSSH:
                     self.delete_wireguard_peer(peer["public-key"], self.ssh_config["interface"])
 
             # Kirim notifikasi
-            send_discord_notification(f"✅ Sinkronisasi WireGuard selesai pada {self.ssh_config['host']}.")
+            Utils.send_discord_notification(f"✅ Sinkronisasi WireGuard selesai pada {self.ssh_config['host']}.")
         except KeyError as e:
             print(f"Error: Missing configuration key: {e}")
-            send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
+            Utils.send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
         except Exception as e:
             print(f"Error: {e}")
-            send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
+            Utils.send_discord_notification(f"⚠️ Gagal melakukan sinkronisasi WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
         finally:
             self.ssh_close()
 
@@ -117,13 +117,13 @@ class DebianSSH:
             print("WireGuard Status:\n", formatted_status)
 
             # Kirim notifikasi ke Discord jika webhook diatur
-            send_discord_notification(f"WireGuard Status pada {self.ssh_config['host']}:\n```{formatted_status}```")
+            Utils.send_discord_notification(f"WireGuard Status pada {self.ssh_config['host']}:\n```{formatted_status}```")
 
         except KeyError as e:
             print(f"Error: Missing configuration key: {e}")
-            send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
+            Utils.send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: Missing configuration key: {e}")
         except Exception as e:
             print(f"Error: {e}")
-            send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
+            Utils.send_discord_notification(f"⚠️ Gagal mengecek status WireGuard pada {self.ssh_config.get('host', 'unknown')}: {e}")
         finally:
             self.ssh_close()
